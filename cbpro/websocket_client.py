@@ -49,16 +49,12 @@ class WebsocketClient(object):
         self.mongo_collection = mongo_collection
 
     def start(self):
-        def _go():
-            self._connect()
-            self._listen()
-            self._disconnect()
-
         self.stop = False
         self.on_open()
-        self.thread = Thread(target=_go)
+        self.thread = Thread(target=self._connect())
         self.keepalive = Thread(target=self._keepalive)
         self.thread.start()
+        return self.ws
 
     def _connect(self):
         if self.products is None:
