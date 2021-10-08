@@ -15,6 +15,10 @@ from threading import Thread
 from websocket import create_connection, WebSocketConnectionClosedException
 from pymongo import MongoClient
 from cbpro.cbpro_auth import get_auth_headers
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class WebsocketClient(object):
@@ -54,6 +58,7 @@ class WebsocketClient(object):
         self.thread = Thread(target=self._connect())
         self.keepalive = Thread(target=self._keepalive)
         self.thread.start()
+        self.keepalive.start()
         return self.ws
 
     def _connect(self):
@@ -80,6 +85,7 @@ class WebsocketClient(object):
             sub_params['passphrase'] = auth_headers['CB-ACCESS-PASSPHRASE']
             sub_params['timestamp'] = auth_headers['CB-ACCESS-TIMESTAMP']
 
+        LOGGER.info("Connected websocket")
         self.ws = create_connection(self.url)
 
         self.ws.send(json.dumps(sub_params))
