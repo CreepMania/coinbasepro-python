@@ -93,6 +93,7 @@ class WebsocketClient(object):
     def _keepalive(self, interval=30):
         while self.ws.connected:
             self.ws.ping("keepalive")
+            LOGGER.debug("keepalive")
             time.sleep(interval)
 
     def _listen(self):
